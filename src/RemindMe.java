@@ -231,6 +231,7 @@ public class RemindMe {
         else {
 
             System.out.println("Application will now terminate.");
+            Logger.global.fine("Application dependencies were not resolved.");
         }
     }
 }

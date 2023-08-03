@@ -1,4 +1,7 @@
+package DataProvider;
+
 import java.io.LineNumberReader;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.List;
@@ -11,7 +14,13 @@ import java.util.Vector;
  */
 public class CSVHelper
 {
-    public static void writeLine(Writer w, List<String> values)
+    private PrintWriter w;
+
+    public CSVHelper(PrintWriter w) {
+        // declare a writer instance with output stream intact
+        this.w = w;
+    }
+    public void writeLine(List<String> values)
             throws Exception
     {
         boolean firstVal = true;
@@ -26,6 +35,9 @@ public class CSVHelper
                     w.write("\"");  //extra quote
                 }
                 w.write(ch);
+
+                System.out.println("\nHas any error occurred during write: "
+                        + w.checkError());
             }
             w.write("\"");
             firstVal = false;

@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -46,8 +48,13 @@ public class DatProvider {
                 switch (in) {
 
                     case "n":           // application to create
-                                        createResourceTwo(path);
-                                        break; // return true;
+                                        if ( !createResourceTwo(path) ) {
+
+                                            getResourceTwo(path);
+                                        }
+                                        else {
+                                            break;
+                                        }
 
                     case "y":           // no GUI for this
                                         // let user provide files at the cmd line
@@ -79,13 +86,17 @@ public class DatProvider {
             System.out.println("Core file is missing. Would you like to supply your own? (Y/N)");
             Scanner kb = new Scanner(System.in);
             try {
-                // TODO: Replace block with a nice switch statement
                 String in = kb.nextLine().toLowerCase();
                 switch (in) {
 
                     case "n":           // application to create
-                                        createResourceOne(path);
-                                        break; // return true;
+                                        if ( !createResourceOne(path) ) {
+
+                                            getResourceOne(path);
+                                        }
+                                        else {
+                                            break;
+                                        }
 
                     case "y":           // no GUI for this
                                         // let user provide files at the cmd line
@@ -106,7 +117,11 @@ public class DatProvider {
         return true;
     }
 
-    private void createResourceTwo(final String path) throws IOException {
+    private boolean createResourceTwo(final String path) throws IOException {
+
+        // (1) change path string
+        // (2) change header strings
+        // (3) change the last printed line
 
         Path p1 = Paths.get(path);
         Path p2 = p1.resolve("TODOs.csv");
@@ -115,12 +130,75 @@ public class DatProvider {
         boolean success = FILE_NAME.createNewFile();
 
         assert(success);
+        class local {
 
-        Logger.global.info("The application has created TODOs.csv");
+
+            // if the returned class is Red in your IDE it's a problem and
+            // by fixing it will tell you why
+            private boolean generateCSVHeader(CSVHelper help) {
+
+                final String unixID = "unixID";
+                final String dsc = "desc";
+                final String mrk = "marked"; // TODO: feature allows todos to be parsed as active/inactive
+                final String dte = "dateLogged";
+                final String dur = "duration"; // TODO: feature allows duration to be calculated from the date logged
+                final String nme = "projID";
+
+                List<String> header = new ArrayList<>();
+                header.add(unixID);
+                header.add(dsc);
+                header.add(mrk);
+                header.add(dte);
+                header.add(dur);
+                header.add(nme);
+
+                try {
+
+                    help.writeLine(header);
+                    Logger.global.fine("The application has written headers.");
+
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        PrintWriter writer;
+        boolean res = false;
+        try {
+
+            writer = new PrintWriter(new FileOutputStream(FILE_NAME, true));
+            CSVHelper help = new CSVHelper(writer);
+            // add Project headers
+            res = new local().generateCSVHeader(help);
+
+        } catch (Exception e) {
+            Logger.global.info("An underlying output stream could not be opened. Please check the resource file to see if headers have been updated.");
+            e.printStackTrace();
+        }
+
+        if ( !res ) {
+            // bad write need to call again
+            System.err.println("There was an error writing to this resource. Please try again.");
+
+            // reset directory conditions
+            FILE_NAME.delete();
+            return false;
+        }
+        else {
+
+            System.out.println("The application has created TODOs.csv.");
+        }
+
+        return true;
 
     }
 
-    private void createResourceOne(final String path) throws IOException {
+    private boolean createResourceOne(final String path) throws IOException {
 
         Path p1 = Paths.get(path);
         Path p2 = p1.resolve("jobs.csv");
@@ -129,12 +207,69 @@ public class DatProvider {
         boolean success = FILE_NAME.createNewFile();
 
         assert(success);
-
-        // add Project headers
-        // CSVHelper help = new CSVHelper();
+        class local {
 
 
-        Logger.global.info("The application has created jobs.csv");
+            // if the returned class is Red in your IDE it's a problem and
+            // by fixing it will tell you why
+            private boolean generateCSVHeader(CSVHelper help) {
+
+                final String unixID = "unixID";
+                final String nme = "projName";
+                final String dsc = "projDesc";
+                final String mrk = "marked"; // active/inactive
+                final String opnTODOs = "openTODOs"; // TODO: feature allows open todos to be counted
+
+                List<String> header = new ArrayList<>();
+                header.add(unixID);
+                header.add(nme);
+                header.add(dsc);
+                header.add(mrk);
+                header.add(opnTODOs);
+
+                try {
+
+                    help.writeLine(header);
+                    Logger.global.fine("The application has written headers.");
+
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
+        PrintWriter writer;
+        boolean res = false;
+        try {
+
+            writer = new PrintWriter(new FileOutputStream(FILE_NAME, true));
+            CSVHelper help = new CSVHelper(writer);
+            // add Project headers
+            res = new local().generateCSVHeader(help);
+
+        } catch (Exception e) {
+            Logger.global.info("An underlying output stream could not be opened. Please check the resource file to see if headers have been updated.");
+            e.printStackTrace();
+        }
+
+        if ( !res ) {
+            // bad write need to call again
+            System.err.println("There was an error writing to this resource. Please try again.");
+
+            // reset directory conditions
+            FILE_NAME.delete();
+            return false;
+        }
+        else {
+
+            System.out.println("The application has created jobs.csv.");
+        }
+
+        return true;
 
     }
 
@@ -148,7 +283,4 @@ public class DatProvider {
 
     }
 
-    private void writeLine(){
-
-    }
 }
