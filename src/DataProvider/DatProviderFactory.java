@@ -5,6 +5,7 @@ public final class DatProviderFactory {
     // correctly.
     private static volatile DatProviderFactory instance;
 
+    private String ourUsablePath;
     public String value;
 
     private DatProviderFactory(String value) {
@@ -35,9 +36,19 @@ public final class DatProviderFactory {
             return instance;
         }
     }
+
+    public void setOurUsablePath(final String path) {
+        this.ourUsablePath = path;
+    }
+
+    public String getOurUsablePath() {
+
+        return ourUsablePath;
+    }
+
     public DatProvider createDataProvider() {
 
-        DatProvider datPrv = new DatProvider();
+        DatProvider datPrv = new DatProvider(this.getOurUsablePath());
         return datPrv;
     }
 }

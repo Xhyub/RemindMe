@@ -116,9 +116,10 @@ public class RemindMe {
         }
 
         // resume with an archive folder created
+        fc1.setOurUsablePath(pDance.toString());
         DatProvider datPrv1 = fc1.createDataProvider();
 
-        boolean chk = datPrv1.perfChkTsk(pDance.toString());
+        boolean chk = datPrv1.perfChkTsk();
 
         if ( !chk ) {
 
@@ -184,6 +185,7 @@ public class RemindMe {
                 case 1:
 
                 case 2:                 System.out.println("Adding project now.");
+                                        addProject();
 
                 case 3:
 
@@ -199,7 +201,7 @@ public class RemindMe {
         }
     }
 
-    private void addProject(){
+    private static void addProject(){
 
         DatProvider datPrv = fc1.createDataProvider();
 

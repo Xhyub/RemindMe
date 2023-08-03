@@ -16,14 +16,19 @@ import java.util.logging.Logger;
 
 public class DatProvider {
 
-    public DatProvider() {
+    private String pathToArchive;
+
+
+    public DatProvider(final String path) {
         super();
+        this.pathToArchive = path;
+        System.out.println("Instantiated a DatProvider: " + pathToArchive);
     }
 
-    public boolean perfChkTsk(String path) {
+    public boolean perfChkTsk() {
 
-        boolean jobsCSVChk = getResourceOne(path);
-        boolean TODOsCSVChk = getResourceTwo(path);
+        boolean jobsCSVChk = getResourceOne();
+        boolean TODOsCSVChk = getResourceTwo();
 
         if ( !jobsCSVChk || !TODOsCSVChk ) {
 
@@ -33,9 +38,9 @@ public class DatProvider {
         return true;
     }
 
-    public boolean getResourceTwo(final String path) {
+    public boolean getResourceTwo() {
 
-        Path p1 = Paths.get(path);
+        Path p1 = Paths.get(pathToArchive);
         Path p2 = p1.resolve("TODOs.csv");
         if ( !Files.exists(p2) ) {
 
@@ -49,9 +54,9 @@ public class DatProvider {
                 switch (in) {
 
                     case "n":           // application to create
-                                        if ( !createResourceTwo(path) ) {
+                                        if ( !createResourceTwo() ) {
 
-                                            getResourceTwo(path);
+                                            getResourceTwo();
                                         }
                                         else {
                                             break;
@@ -65,7 +70,7 @@ public class DatProvider {
                                         return false;
 
                     default:            System.out.println("Please select an option");
-                                        getResourceTwo(path);
+                                        getResourceTwo();
                 }
             }
             catch(Exception e)
@@ -76,9 +81,9 @@ public class DatProvider {
         return true;
     }
 
-    public boolean getResourceOne(final String path) {
+    public boolean getResourceOne() {
 
-        Path p1 = Paths.get(path);
+        Path p1 = Paths.get(pathToArchive);
         Path p2 = p1.resolve("jobs.csv");
         if ( !Files.exists(p2) ) {
 
@@ -91,9 +96,9 @@ public class DatProvider {
                 switch (in) {
 
                     case "n":           // application to create
-                                        if ( !createResourceOne(path) ) {
+                                        if ( !createResourceOne() ) {
 
-                                            getResourceOne(path);
+                                            getResourceOne();
                                         }
                                         else {
                                             break;
@@ -107,7 +112,7 @@ public class DatProvider {
                                         return false;
 
                     default:            System.out.println("Please select an option");
-                                        getResourceOne(path);
+                                        getResourceOne();
                 }
             }
             catch(Exception e)
@@ -118,13 +123,13 @@ public class DatProvider {
         return true;
     }
 
-    private boolean createResourceTwo(final String path) throws IOException {
+    private boolean createResourceTwo() throws IOException {
 
         // (1) change path string
         // (2) change header strings
         // (3) change the last printed line
 
-        Path p1 = Paths.get(path);
+        Path p1 = Paths.get(pathToArchive);
         Path p2 = p1.resolve("TODOs.csv");
 
         File FILE_NAME = new File(p2.toString());
@@ -199,9 +204,9 @@ public class DatProvider {
 
     }
 
-    private boolean createResourceOne(final String path) throws IOException {
+    private boolean createResourceOne() throws IOException {
 
-        Path p1 = Paths.get(path);
+        Path p1 = Paths.get(pathToArchive);
         Path p2 = p1.resolve("jobs.csv");
 
         File FILE_NAME = new File(p2.toString());
