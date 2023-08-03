@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -273,8 +274,10 @@ public class DatProvider {
 
     }
 
-    private void loadJobsCSVData() {
+    public ArrayList<ArrayList<String>> loadProjectCSVData() {
 
+
+        return null;
 
     }
 
@@ -283,4 +286,7 @@ public class DatProvider {
 
     }
 
+    public void blockWrite(ArrayList<ArrayList<String>> line) {
+
+    }
 }

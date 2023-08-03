@@ -4,7 +4,9 @@ import ResultOBJ.DirectoryResult;
 import ResultOBJ.SystemResult;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.logging.*;
 
@@ -201,7 +203,20 @@ public class RemindMe {
 
         DatProvider datPrv = fc1.createDataProvider();
 
+        ArrayList<ArrayList<String>> listOfJobs = new ArrayList<>();
+        listOfJobs = datPrv.loadProjectCSVData();
 
+        // Create project line item
+        ProjLineItem itm = new ProjLineItem();
+
+        listOfJobs.add(itm.createLineItem());
+
+        // the application should write at once incase any interruption
+        // TODO: just have to make sure DataProvider has a usable path always
+        datPrv.blockWrite(listOfJobs);
+        System.out.println("Project successfully added.");
+
+        return;
     }
 
     private void addTODO(){
