@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
@@ -420,7 +421,45 @@ public class DatProvider {
         return sessionList;
     }
 
-    public ArrayList<List<String>> loadCSVData_Display() throws DataAccessException {
+    public ArrayList<List<String>> loadCSVDataForListDisp() throws DataAccessException {
+
+        ArrayList<List<String>> listOfJobs = new ArrayList<List<String>>();
+        ArrayList<List<String>> listOfTODOs = new ArrayList<List<String>>();
+
+        // here would be a point where you could apply parallel
+        int lne_cnt1 = 0;
+        int lne_cnt2 = 0;
+
+        listOfJobs = loadProjectCSVData_Session(listOfJobs, lne_cnt1);
+        listOfTODOs = loadTODOsCSVData_Session(listOfTODOs, lne_cnt2);
+
+        // for every project line item
+        int jobIndex = 0;
+        for (List<String> proLne :
+             listOfJobs) {
+
+            System.out.println("["+jobIndex+"] "+proLne);
+
+            // print it's TODOs
+            // gather the todos then remove all entries not matching
+            for (Iterator<List<String>> iter = listOfTODOs.listIterator(); iter.hasNext(); ) {
+                List<String> line = iter.next();
+
+
+                if (Integer.toString(jobIndex).equals(line.get(1).trim())  ||
+                        "INACTIVE".equals(line.get(4).trim())) {
+
+                    System.out.println(line);
+
+
+                }
+
+                // TODO: Feature that orders the TODOs by date
+            }
+            jobIndex++;
+        }
+
+
 
         return null;
     }

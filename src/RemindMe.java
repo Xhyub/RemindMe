@@ -294,15 +294,13 @@ public class RemindMe {
     private static void printTheActiveList() {
 
         DatProvider datPrv = fc1.createDataProvider();
-        ArrayList<List<String>> prnt = new ArrayList<List<String>>();
 
+        try {
 
+            datPrv.loadCSVDataForListDisp();
+        } catch (DataAccessException dae) {
 
-        for (List<String> lne:
-             prnt) {
-            System.out.println(lne);
         }
-        System.out.println("\n");
 
     }
 
