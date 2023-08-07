@@ -48,20 +48,13 @@ public class RemindMe {
         fc1 = fc1.getInstance("My Data Factory");
 
         // TODO: log more developer related context
-        // TODO: can't access this yet... reading practical Java
+        // TODO: No logging yet... reading practical Java
 
-        Logger.global.fine("Initial DataFactory initialized successfully on startup...");
+        Logger.global.fine("DataFactory initialized successfully on startup...");
 
     }
     private static void initLogHandler(LogManager global_log_manager_prototype) {
 
-        /* TODO: define a logs config mabye log.properties and Java Preferences API
-
-        Logger myLogger = Logger.getLogger("RemindMe");
-
-        Logger.global.info("No logs yet...");
-
-         */
     }
     private static void setUser() {
 
@@ -83,7 +76,6 @@ public class RemindMe {
 
             if ( !Files.exists(p3) ) {
 
-                // do nothing?
                 Logger.global.fine("No local archive folder located on the system."); // incl as a method for this state
                 createRemindMeArchive(p3.toString());
             }
@@ -103,14 +95,12 @@ public class RemindMe {
 
             if ( !Files.exists(p3) ) {
 
-                // do nothing?
                 Logger.global.fine("No local archive folder located on the system."); // incl as a method for this state
                 createRemindMeArchive(p3.toString());
             }
         }
         else if ("NS".equals(sysOS)) {
 
-            // TODO: LOG THIS
             System.err.println("The underlying operating system is not supported.");
             System.err.println("The application will now terminate.");
             System.exit(1);
@@ -209,7 +199,6 @@ public class RemindMe {
 
         DatProvider datPrv = fc1.createDataProvider();
 
-
         ArrayList<List<String>> listOfJobs = new ArrayList<List<String>>();
         int line = 0;
         try {
@@ -220,11 +209,9 @@ public class RemindMe {
 
             dae.printStackTrace();
 
-            // using this print statement to test the list
-            System.out.print("Size of List: " + listOfJobs.size());
+            // TODO: Feature that keeps a incomplete list upon bad read
+            // System.out.print("Size of List: " + listOfJobs.size());
 
-            // TODO: currently doesn't do much with knowing that there is a
-            // incomplete list
             return;
         }
 
@@ -236,7 +223,7 @@ public class RemindMe {
 
         listOfJobs.add(lne);
 
-        // just need to test inputs
+        /* just need to test inputs
         for (List<String> lin: listOfJobs
              ) {
             for (String str : lin
@@ -244,15 +231,16 @@ public class RemindMe {
                 System.out.println(str);
             }
         }
-
+        */
         // TODO: havent done the write yet
         // not going to be formatted and ready for block write
-        // the application should write at once incase any interruption
+        // the application should write at once in-case any interruption
+        // otherwise the list is held in memory for the application to
+        // change
 
         // TODO: just have to make sure DataProvider has a usable path always
-        // datPrv.blockWrite(listOfJobs);
+        datPrv.blockWrite(listOfJobs, "jobs.csv");
 
-        // TODO: not reaching here...
         System.out.println("Project successfully added.");
 
     }
@@ -260,8 +248,8 @@ public class RemindMe {
     private static void addTODO(){
 
         DatProvider datPrv = fc1.createDataProvider();
-        ArrayList<List<String>> listOfTODOs = new ArrayList<List<String>>();
 
+        ArrayList<List<String>> listOfTODOs = new ArrayList<List<String>>();
         int lne = 0;
         try {
 
@@ -270,11 +258,10 @@ public class RemindMe {
         } catch (DataAccessException dae) {
 
             dae.printStackTrace();
-            // using this print statement to test the list
-            System.out.print("Size of List: " + listOfTODOs.size());
 
-            // TODO: currently doesn't do much with knowing that there is a
-            // incomplete list
+            // TODO: Feature that keeps a incomplete list upon bad read
+            // System.out.print("Size of List: " + listOfTODOs.size());
+
             return;
         }
 

@@ -13,11 +13,9 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
-
 public class DatProvider {
 
     private String pathToArchive;
-
 
     public DatProvider(final String path) {
         super();
@@ -138,7 +136,6 @@ public class DatProvider {
         assert(success);
         class local {
 
-
             // if the returned class is Red in your IDE it's a problem and
             // by fixing it will tell you why
             private boolean generateCSVHeader(CSVHelper help) {
@@ -196,7 +193,6 @@ public class DatProvider {
             return false;
         }
         else {
-
             System.out.println("The application has created TODOs.csv.");
         }
 
@@ -214,7 +210,6 @@ public class DatProvider {
 
         assert(success);
         class local {
-
 
             // if the returned class is Red in your IDE it's a problem and
             // by fixing it will tell you why
@@ -285,9 +280,9 @@ public class DatProvider {
         int fail = line; // for a failing line upon read
 
         // TODO: ideally would like to check my assumptions
+        // TODO: look into Interface MemoryAddress
         // and test the memory addresses of the variables that
         // are passed
-        // TODO: look into Interface MemoryAddress
 
         Path p1 = Paths.get(pathToArchive);
         Path p2 = p1.resolve("jobs.csv");
@@ -303,10 +298,8 @@ public class DatProvider {
                 reader = new InputStreamReader(in, "UTF-8");
 
             } catch (Exception e) {
-
                 throw new DataAccessException("Failed to open an input stream. Please retry.");
             }
-
 
             List<String> values =  null;
             CSVHelper loader = new CSVHelper();
@@ -344,7 +337,7 @@ public class DatProvider {
             }
         }
         else {
-            // terminating upon unsuccessful read of file
+            // throw this so user can call again
             throw new DataAccessException("The application was unable to read a resource. You can retry.");
         }
 
@@ -421,7 +414,7 @@ public class DatProvider {
         return sessionList;
     }
 
-    public ArrayList<List<String>> loadCSVDataForListDisp() throws DataAccessException {
+    public void loadCSVDataForListDisp() throws DataAccessException {
 
         ArrayList<List<String>> listOfJobs = new ArrayList<List<String>>();
         ArrayList<List<String>> listOfTODOs = new ArrayList<List<String>>();
@@ -430,6 +423,7 @@ public class DatProvider {
         int lne_cnt1 = 0;
         int lne_cnt2 = 0;
 
+        // TODO: put me into TRY/CATCH after the predecessor is sorted
         listOfJobs = loadProjectCSVData_Session(listOfJobs, lne_cnt1);
         listOfTODOs = loadTODOsCSVData_Session(listOfTODOs, lne_cnt2);
 
@@ -438,14 +432,14 @@ public class DatProvider {
         for (List<String> proLne :
              listOfJobs) {
 
+            // TODO: Add formatting features
             System.out.println("["+jobIndex+"] "+proLne);
 
             // print it's TODOs
-            // gather the todos then remove all entries not matching
             for (Iterator<List<String>> iter = listOfTODOs.listIterator(); iter.hasNext(); ) {
                 List<String> line = iter.next();
 
-
+                // test condition for the matching job index
                 if (Integer.toString(jobIndex).equals(line.get(1).trim())  ||
                         "INACTIVE".equals(line.get(4).trim())) {
 
@@ -455,17 +449,85 @@ public class DatProvider {
                 }
 
                 // TODO: Feature that orders the TODOs by date
+                // TODO: Feature that prints characters slowly
             }
             jobIndex++;
         }
-
-
-
-        return null;
     }
 
-    public void blockWrite(ArrayList<ArrayList<String>> line) {
+    public void blockWrite(ArrayList<List<String>> list, final String resource) {
 
+        if ("jobs.csv".equals(resource)) {
+
+            Path p1 = Paths.get(pathToArchive);
+            Path p2 = p1.resolve(resource);
+            File FILE_NAME = new File(p2.toString());
+            if (FILE_NAME.exists()) {
+
+                PrintWriter writer;
+                try {
+
+                    writer = new PrintWriter(new FileOutputStream(FILE_NAME, false));
+                    CSVHelper help = new CSVHelper(writer);
+
+                    for (List<String> line :
+                            list) {
+
+                        // write here
+                        // what if errors occur?
+                        try {
+
+                            help.writeLine(line);
+
+                        }
+                        catch (Exception e){
+                            // e.printStackTrace();
+                            blockWrite(list, resource);
+                        }
+                    }
+                } catch (Exception e) {
+                    Logger.global.info("An underlying output stream could not be opened. Please check the resource file to see if headers have been updated.");
+                    e.printStackTrace();
+                }
+                Logger.global.info("Write performed jobs.csv.");
+            }
+        }
+        else if ("TODOs.csv".equals(resource)) {
+
+            Path p1 = Paths.get(pathToArchive);
+            Path p2 = p1.resolve(resource);
+            File FILE_NAME = new File(p2.toString());
+            if (FILE_NAME.exists()) {
+
+                PrintWriter writer;
+                try {
+
+                    writer = new PrintWriter(new FileOutputStream(FILE_NAME, false));
+                    CSVHelper help = new CSVHelper(writer);
+
+                    for (List<String> line :
+                            list) {
+
+                        // write here
+                        // what if errors occur?
+                        try {
+
+                            help.writeLine(line);
+
+                        }
+                        catch (Exception e){
+                            // e.printStackTrace();
+                            blockWrite(list, resource);
+                        }
+                    }
+                } catch (Exception e) {
+                    Logger.global.info("An underlying output stream could not be opened. " +
+                            "Please check the resource file to see if headers have been updated.");
+                    e.printStackTrace();
+                }
+                Logger.global.info("Write performed TODOs.csv.");
+            }
+        }
     }
 
     // this is a feature and could be added upstream?
