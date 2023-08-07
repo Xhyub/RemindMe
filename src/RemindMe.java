@@ -1,5 +1,6 @@
 import DataProvider.DatProvider;
 import DataProvider.DatProviderFactory;
+import ExceptionClasses.DataAccessException;
 import ResultOBJ.DirectoryResult;
 import ResultOBJ.SystemResult;
 
@@ -7,6 +8,7 @@ import java.io.File;
 import java.lang.reflect.Array;
 import java.nio.file.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.*;
 
@@ -182,13 +184,15 @@ public class RemindMe {
             in = kb.nextInt();
             switch(in) {
 
-                case 1:
+                case 1:                 printTheActiveList();
+                                        break;
 
                 case 2:                 System.out.println("Adding project now.");
                                         addProject();
+                                        break;
 
-                case 3:
-
+                case 3:                 System.out.println("Adding TOOD now.");
+                                        addTODO();
                 case 4:
 
                 default:
@@ -205,23 +209,100 @@ public class RemindMe {
 
         DatProvider datPrv = fc1.createDataProvider();
 
-        ArrayList<ArrayList<String>> listOfJobs = new ArrayList<>();
-        listOfJobs = datPrv.loadProjectCSVData();
+
+        ArrayList<List<String>> listOfJobs = new ArrayList<List<String>>();
+        int line = 0;
+        try {
+
+            listOfJobs = datPrv.loadProjectCSVData_Session(listOfJobs, line);
+
+        } catch (DataAccessException dae) {
+
+            dae.printStackTrace();
+
+            // using this print statement to test the list
+            System.out.print("Size of List: " + listOfJobs.size());
+
+            // TODO: currently doesn't do much with knowing that there is a
+            // incomplete list
+            return;
+        }
 
         // Create project line item
         ProjLineItem itm = new ProjLineItem();
 
-        listOfJobs.add(itm.createLineItem());
+        ArrayList<String> lne = new ArrayList<>();
+        lne = itm.createLineItem();
 
+        listOfJobs.add(lne);
+
+        // just need to test inputs
+        for (List<String> lin: listOfJobs
+             ) {
+            for (String str : lin
+                 ) {
+                System.out.println(str);
+            }
+        }
+
+        // TODO: havent done the write yet
+        // not going to be formatted and ready for block write
         // the application should write at once incase any interruption
+
         // TODO: just have to make sure DataProvider has a usable path always
-        datPrv.blockWrite(listOfJobs);
+        // datPrv.blockWrite(listOfJobs);
+
+        // TODO: not reaching here...
         System.out.println("Project successfully added.");
 
-        return;
     }
 
-    private void addTODO(){
+    private static void addTODO(){
+
+        DatProvider datPrv = fc1.createDataProvider();
+        ArrayList<List<String>> listOfTODOs = new ArrayList<List<String>>();
+
+        int lne = 0;
+        try {
+
+            listOfTODOs = datPrv.loadTODOsCSVData_Session(listOfTODOs, lne);
+
+        } catch (DataAccessException dae) {
+
+            dae.printStackTrace();
+            // using this print statement to test the list
+            System.out.print("Size of List: " + listOfTODOs.size());
+
+            // TODO: currently doesn't do much with knowing that there is a
+            // incomplete list
+            return;
+        }
+
+        // TODO: missing the write
+
+        // just need to test inputs
+        for (List<String> lin: listOfTODOs
+        ) {
+            for (String str : lin
+            ) {
+                System.out.print(str);
+            }
+            System.out.println();
+        }
+    }
+
+    private static void printTheActiveList() {
+
+        DatProvider datPrv = fc1.createDataProvider();
+        ArrayList<List<String>> prnt = new ArrayList<List<String>>();
+
+
+
+        for (List<String> lne:
+             prnt) {
+            System.out.println(lne);
+        }
+        System.out.println("\n");
 
     }
 

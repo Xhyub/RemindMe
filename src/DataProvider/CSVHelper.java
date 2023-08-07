@@ -6,6 +6,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 /*
 *       This implementation does not permit "" found within fields
@@ -15,7 +16,11 @@ import java.util.Vector;
 public class CSVHelper
 {
     private PrintWriter w;
+    private PrintWriter r;
 
+    public CSVHelper() {
+        super();
+    }
     public CSVHelper(PrintWriter w) {
         // declare a writer instance with output stream intact
         this.w = w;
@@ -23,8 +28,11 @@ public class CSVHelper
     public void writeLine(List<String> values)
             throws Exception
     {
+
         boolean firstVal = true;
+
         for (String val : values)  {
+
             if (!firstVal) {
                 w.write(",");
             }
@@ -32,17 +40,18 @@ public class CSVHelper
             for (int i=0; i<val.length(); i++) {
                 char ch = val.charAt(i);
                 if (ch=='\"') {
-                    w.write("\"");  //extra quote
+                    w.write("\"");  //writes an extra quote
                 }
                 w.write(ch);
-
-                System.out.println("\nHas any error occurred during write: "
-                        + w.checkError());
+                if (w.checkError()) {
+                    Logger.global.info("Error occurred during write.");
+                }
             }
             w.write("\"");
             firstVal = false;
+
         }
-        w.write("\n");
+        w.write("\r"); // TODO: may need to check if this is writing properly as per RFC
     }
 
     /**
