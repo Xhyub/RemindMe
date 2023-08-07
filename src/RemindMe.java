@@ -181,10 +181,11 @@ public class RemindMe {
                                         addProject();
                                         break;
 
-                case 3:                 System.out.println("Adding TOOD now.");
+                case 3:                 System.out.println("Adding TODO now.");
                                         addTODO();
-                case 4:
-
+                                        break;
+                case 4:                 System.out.println("Exiting the application.");
+                                        System.exit(0);
                 default:
 
             }
@@ -232,13 +233,10 @@ public class RemindMe {
             }
         }
         */
-        // TODO: havent done the write yet
-        // not going to be formatted and ready for block write
+
         // the application should write at once in-case any interruption
         // otherwise the list is held in memory for the application to
         // change
-
-        // TODO: just have to make sure DataProvider has a usable path always
         datPrv.blockWrite(listOfJobs, "jobs.csv");
 
         System.out.println("Project successfully added.");
@@ -252,7 +250,7 @@ public class RemindMe {
         ArrayList<List<String>> listOfTODOs = new ArrayList<List<String>>();
         int lne = 0;
         try {
-
+            // TODO: Needs a load to display the available projects
             listOfTODOs = datPrv.loadTODOsCSVData_Session(listOfTODOs, lne);
 
         } catch (DataAccessException dae) {
@@ -265,7 +263,11 @@ public class RemindMe {
             return;
         }
 
-        // TODO: missing the write
+        TODOsLineItem todo = new TODOsLineItem();
+
+        ArrayList<String> line = new ArrayList<>();
+        line = todo.createLineItem();
+        listOfTODOs.add(line);
 
         // just need to test inputs
         for (List<String> lin: listOfTODOs
@@ -276,6 +278,16 @@ public class RemindMe {
             }
             System.out.println();
         }
+
+        // TODO: missing the write
+        // the application should write at once in-case any interruption
+        // otherwise the list is held in memory for the application to
+        // change
+        datPrv.blockWrite(listOfTODOs, "TODOs.csv");
+
+        System.out.println("TODO successfully added.");
+
+
     }
 
     private static void printTheActiveList() {

@@ -1,6 +1,8 @@
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class TODOsLineItem {
@@ -11,9 +13,13 @@ public class TODOsLineItem {
     private String TODOStatus = null;
 
     public TODOsLineItem() {
+        super();
+    }
+
+    public ArrayList<String> createLineItem() {
 
         Scanner kb = new Scanner(System.in);
-
+        ArrayList<String> lineItem = new ArrayList<>();
 
         setJobID(kb);
         setDesc(kb);
@@ -22,6 +28,13 @@ public class TODOsLineItem {
         // writeToFile();
         System.out.println("TODO entry has been recorded...");
 
+        lineItem.add(Long.toString(unixTime));
+        lineItem.add(jobID);
+        lineItem.add(desc);
+        lineItem.add(dateLogged);
+        lineItem.add(TODOStatus);
+
+        return lineItem;
     }
 
     private void setJobID(Scanner kb) {
