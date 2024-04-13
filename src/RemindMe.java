@@ -251,7 +251,7 @@ public class RemindMe {
         int lne = 0;
         try {
             // TODO: Needs a load to display the available projects
-            listOfTODOs = datPrv.loadTODOsCSVData_Session(listOfTODOs, lne);
+            listOfTODOs = datPrv.loadTODOsCSVData_Session(listOfTODOs);
 
         } catch (DataAccessException dae) {
 

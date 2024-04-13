@@ -319,43 +319,41 @@ public class DatProvider {
         return csvLines;
     }
 
-    public ArrayList<List<String>> loadTODOsCSVData_Session(ArrayList<List<String>> storage, int line) throws DataAccessException {
+    public ArrayList<List<String>> loadTODOsCSVData_Session(ArrayList<List<String>> storage) throws DataAccessException {
 
         // create a local copy of the parameters passed
-        ArrayList<List<String>> sessionList = storage;
-        int fail = line; // for a failing line upon read
-
-        // TODO: ideally would like to check my assumptions
-        // and test the memory addresses of the variables that
-        // are passed
-        // TODO: look into Interface MemoryAddress
+        ArrayList<List<String>> csvLines = storage;
 
         Path p1 = Paths.get(pathToArchive);
         Path p2 = p1.resolve("TODOs.csv");
 
         File f = new File(p2.toString());
-        if (f.exists()) {
+        if ( f.exists() ) {
 
-            FileInputStream in = null;
-            Reader reader = null;
+            // FileInputStream in = null;
+            // Reader reader = null;
+            BufferedReader r;
             try {
                 // try simple IO open stream
-                in = new FileInputStream(f);
-                reader = new InputStreamReader(in, "UTF-8");
+                // in = new FileInputStream(f);
+                // reader = new InputStreamReader(in, "UTF-8");
+                r = new BufferedReader(new FileReader(f));
 
             } catch (Exception e) {
-
                 throw new DataAccessException("Failed to open an input stream. Please retry.");
             }
-
-            List<String> values = null;
+            String lne;
             CSVHelper loader = new CSVHelper();
-
             try {
+
                 // don't add the header
+                while ((lne = r.readLine()) != null ) {
+                    List<String> fields = loader.parseCSVLine(lne);
+                    csvLines.add(fields);
+                }
+                /*
                 int i = 0;
                 values = loader.parseLine(reader);
-
                 while ( values != null ) {
 
                     i = i + 1;
@@ -370,13 +368,13 @@ public class DatProvider {
                     }
                     values = loader.parseLine(reader);
                 }
-                reader.close();
+                */
+                r.close();
 
             } catch (Exception e) {
-
                 e.printStackTrace();
 
-                System.out.println("Read failed on line: " + fail);
+                // System.out.println("Read failed on line: " + fail);
                 throw new DataAccessException("The application failed to read from a resource. " +
                         "Refer to the line number.");
             }
@@ -386,19 +384,17 @@ public class DatProvider {
             throw new DataAccessException("The application was unable to read a resource. You can retry.");
         }
 
-        return sessionList;
+        return csvLines;
     }
 
     public void loadCSVDataForListDisp() throws DataAccessException {
 
         ArrayList<List<String>> listOfJobs = new ArrayList<List<String>>();
-        // ArrayList<List<String>> listOfTODOs = new ArrayList<List<String>>();
-
-        int lne_cnt2 = 0;
+        ArrayList<List<String>> listOfTODOs = new ArrayList<List<String>>();
 
         // TODO: put me into TRY/CATCH after the predecessor is sorted
         listOfJobs = loadProjectCSVData_Session(listOfJobs);
-        // listOfTODOs = loadTODOsCSVData_Session(listOfTODOs, lne_cnt2);
+        listOfTODOs = loadTODOsCSVData_Session(listOfTODOs);
 
         // for every project line item
         int jobIndex = 0;
@@ -406,9 +402,8 @@ public class DatProvider {
              listOfJobs) {
 
             // TODO: Add formatting features
-            System.out.println("["+jobIndex+"] "+proLne);
+            System.out.println("[" + jobIndex + "] " + proLne);
 
-            /*
             // print it's TODOs
             for (Iterator<List<String>> iter = listOfTODOs.listIterator(); iter.hasNext(); ) {
                 List<String> line = iter.next();
@@ -419,7 +414,6 @@ public class DatProvider {
 
                     System.out.println(line);
 
-
                 }
 
                 // TODO: Feature that orders the TODOs by date
@@ -427,7 +421,6 @@ public class DatProvider {
             }
             jobIndex++;
 
-             */
         }
     }
 
