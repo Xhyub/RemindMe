@@ -330,13 +330,8 @@ public class DatProvider {
         File f = new File(p2.toString());
         if ( f.exists() ) {
 
-            // FileInputStream in = null;
-            // Reader reader = null;
             BufferedReader r;
             try {
-                // try simple IO open stream
-                // in = new FileInputStream(f);
-                // reader = new InputStreamReader(in, "UTF-8");
                 r = new BufferedReader(new FileReader(f));
 
             } catch (Exception e) {
@@ -351,30 +346,11 @@ public class DatProvider {
                     List<String> fields = loader.parseCSVLine(lne);
                     csvLines.add(fields);
                 }
-                /*
-                int i = 0;
-                values = loader.parseLine(reader);
-                while ( values != null ) {
-
-                    i = i + 1;
-                    // some error handling, csv class picks up a null value having parsed the end of the file
-                    if (values == null) {
-                        continue;
-                    }
-                    else {
-                        sessionList.add(values);
-                        fail++; // increment the line count here
-
-                    }
-                    values = loader.parseLine(reader);
-                }
-                */
                 r.close();
 
             } catch (Exception e) {
                 e.printStackTrace();
 
-                // System.out.println("Read failed on line: " + fail);
                 throw new DataAccessException("The application failed to read from a resource. " +
                         "Refer to the line number.");
             }
@@ -405,20 +381,22 @@ public class DatProvider {
             System.out.println("[" + jobIndex + "] " + proLne);
 
             // print it's TODOs
-            for (Iterator<List<String>> iter = listOfTODOs.listIterator(); iter.hasNext(); ) {
+            for (Iterator<List<String>> iter=listOfTODOs.listIterator();iter.hasNext();)
+            {
                 List<String> line = iter.next();
-
                 // test condition for the matching job index
-                if (Integer.toString(jobIndex).equals(line.get(1).trim())  ||
-                        "INACTIVE".equals(line.get(4).trim())) {
+                // TODO: Feature that sets inactive/active
+                if (Integer.toString(jobIndex).equals(line.get(1).trim())  // ||
+                        // "INACTIVE".equals(line.get(4).trim())) {
+                ){
 
-                    System.out.println(line);
-
+                    String fmt_lne;
+                    fmt_lne = "    " + line.get(2).trim() + " ~ " + line.get(3).trim() + " ~ " + line.get(4).trim();
+                    System.out.println(fmt_lne);
                 }
-
                 // TODO: Feature that orders the TODOs by date
-                // TODO: Feature that prints characters slowly
             }
+
             jobIndex++;
 
         }
