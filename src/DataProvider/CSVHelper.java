@@ -1,9 +1,7 @@
 package DataProvider;
 
-import java.io.LineNumberReader;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
@@ -28,7 +26,6 @@ public class CSVHelper
     public void writeLine(List<String> values)
             throws Exception
     {
-
         boolean firstVal = true;
 
         for (String val : values)  {
@@ -53,7 +50,6 @@ public class CSVHelper
         }
         w.write("\r"); // TODO: may need to check if this is writing properly as per RFC
     }
-
     /**
      * Returns a null when the input stream is empty
      */
@@ -108,5 +104,27 @@ public class CSVHelper
         }
         store.add(curVal.toString());
         return store;
+    }
+
+    public static List<String> parseCSVLine(String line) {
+        List<String> fieldsList = new ArrayList<>();
+        StringBuilder currentField = new StringBuilder();
+        boolean insideQuotes = false;
+
+        for (char c : line.toCharArray()) {
+            if (c == '"') {
+                insideQuotes = !insideQuotes;
+            } else if (c == ',' && !insideQuotes) {
+                fieldsList.add(currentField.toString());
+                currentField.setLength(0); // Clear the current field
+            } else {
+                currentField.append(c);
+            }
+        }
+
+        // Add the last field
+        fieldsList.add(currentField.toString());
+
+        return fieldsList;
     }
 }

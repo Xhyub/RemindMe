@@ -4,6 +4,7 @@ import ExceptionClasses.DataAccessException;
 
 import java.io.*;
 import java.lang.reflect.Array;
+import java.nio.Buffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,6 +13,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
+
+import static DataProvider.CSVHelper.parseCSVLine;
 
 public class DatProvider {
 
@@ -274,15 +277,9 @@ public class DatProvider {
 
     }
 
-    public ArrayList<List<String>> loadProjectCSVData_Session(ArrayList<List<String>> storage, int line) throws DataAccessException {
+    public ArrayList<List<String>> loadProjectCSVData_Session(ArrayList<List<String>> storage) throws DataAccessException {
 
-        ArrayList<List<String>> sessionList = storage;
-        int fail = line; // for a failing line upon read
-
-        // TODO: ideally would like to check my assumptions
-        // TODO: look into Interface MemoryAddress
-        // and test the memory addresses of the variables that
-        // are passed
+        ArrayList<List<String>> csvLines = storage;
 
         Path p1 = Paths.get(pathToArchive);
         Path p2 = p1.resolve("jobs.csv");
@@ -290,48 +287,27 @@ public class DatProvider {
         File f = new File(p2.toString());
         if ( f.exists() ) {
 
-            FileInputStream in = null;
-            Reader reader = null;
+            BufferedReader r;
             try {
                 // try simple IO open stream
-                in = new FileInputStream(f);
-                reader = new InputStreamReader(in, "UTF-8");
+                r = new BufferedReader(new FileReader(f));
 
             } catch (Exception e) {
                 throw new DataAccessException("Failed to open an input stream. Please retry.");
             }
-
-            List<String> values =  null;
+            String lne;
             CSVHelper loader = new CSVHelper();
             try {
                 // don't add the header
-                int i = 0;
-                values = loader.parseLine(reader);
-
-                while ( values != null ) {
-
-                    i = i + 1;
-                    // some error handling, csv class picks up a null value having parsed the end of the file
-                    if (values == null) {
-                        continue;
-                    }
-                    else {
-                        sessionList.add(values);
-                        fail++; // increment the line count here
-
-                        /* remove when having implemented something suitable */
-                        if (fail == 4) {
-                            // throw new Exception();
-                        }
-                    }
-                    values = loader.parseLine(reader);
+                while ((lne = r.readLine()) != null) {
+                    List<String> fields = loader.parseCSVLine(lne);
+                    csvLines.add(fields);
                 }
-                reader.close();
+                r.close();
 
             } catch (Exception e) {
                 e.printStackTrace();
 
-                System.out.println("Read failed on line: " + fail);
                 throw new DataAccessException("The application failed to read from a resource. " +
                         "Refer to the line number.");
             }
@@ -340,8 +316,7 @@ public class DatProvider {
             // throw this so user can call again
             throw new DataAccessException("The application was unable to read a resource. You can retry.");
         }
-
-        return sessionList;
+        return csvLines;
     }
 
     public ArrayList<List<String>> loadTODOsCSVData_Session(ArrayList<List<String>> storage, int line) throws DataAccessException {
@@ -417,15 +392,13 @@ public class DatProvider {
     public void loadCSVDataForListDisp() throws DataAccessException {
 
         ArrayList<List<String>> listOfJobs = new ArrayList<List<String>>();
-        ArrayList<List<String>> listOfTODOs = new ArrayList<List<String>>();
+        // ArrayList<List<String>> listOfTODOs = new ArrayList<List<String>>();
 
-        // here would be a point where you could apply parallel
-        int lne_cnt1 = 0;
         int lne_cnt2 = 0;
 
         // TODO: put me into TRY/CATCH after the predecessor is sorted
-        listOfJobs = loadProjectCSVData_Session(listOfJobs, lne_cnt1);
-        listOfTODOs = loadTODOsCSVData_Session(listOfTODOs, lne_cnt2);
+        listOfJobs = loadProjectCSVData_Session(listOfJobs);
+        // listOfTODOs = loadTODOsCSVData_Session(listOfTODOs, lne_cnt2);
 
         // for every project line item
         int jobIndex = 0;
@@ -435,6 +408,7 @@ public class DatProvider {
             // TODO: Add formatting features
             System.out.println("["+jobIndex+"] "+proLne);
 
+            /*
             // print it's TODOs
             for (Iterator<List<String>> iter = listOfTODOs.listIterator(); iter.hasNext(); ) {
                 List<String> line = iter.next();
@@ -452,6 +426,8 @@ public class DatProvider {
                 // TODO: Feature that prints characters slowly
             }
             jobIndex++;
+
+             */
         }
     }
 

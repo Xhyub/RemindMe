@@ -201,16 +201,16 @@ public class RemindMe {
         DatProvider datPrv = fc1.createDataProvider();
 
         ArrayList<List<String>> listOfJobs = new ArrayList<List<String>>();
-        int line = 0;
+        // TODO: Feature that keeps a incomplete list upon bad read
+        int lne_err = 0;
         try {
 
-            listOfJobs = datPrv.loadProjectCSVData_Session(listOfJobs, line);
+            listOfJobs = datPrv.loadProjectCSVData_Session(listOfJobs);
 
         } catch (DataAccessException dae) {
 
             dae.printStackTrace();
 
-            // TODO: Feature that keeps a incomplete list upon bad read
             // System.out.print("Size of List: " + listOfJobs.size());
 
             return;
