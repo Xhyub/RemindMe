@@ -420,11 +420,6 @@ public class DatProvider {
                     for (List<String> line :
                             list) {
 
-                        // write here
-                        // what if errors occur?
-                        // for this small application is doesn't matter
-                        // but for an application handling lots of rows of data
-                        // then discarding anything past the bad read would be useful
                         try {
 
                             help.writeLine(line);
@@ -463,7 +458,6 @@ public class DatProvider {
                         try {
 
                             help.writeLine(line);
-
                         }
                         catch (Exception e){
                             // e.printStackTrace();

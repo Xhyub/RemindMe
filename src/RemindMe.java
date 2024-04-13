@@ -234,9 +234,6 @@ public class RemindMe {
         }
         */
 
-        // the application should write at once in-case any interruption
-        // otherwise the list is held in memory for the application to
-        // change
         datPrv.blockWrite(listOfJobs, "jobs.csv");
 
         System.out.println("Project successfully added.");
@@ -269,24 +266,9 @@ public class RemindMe {
         line = todo.createLineItem();
         listOfTODOs.add(line);
 
-        // just need to test inputs
-        for (List<String> lin: listOfTODOs
-        ) {
-            for (String str : lin
-            ) {
-                System.out.print(str);
-            }
-            System.out.println();
-        }
-
-        // TODO: missing the write
-        // the application should write at once in-case any interruption
-        // otherwise the list is held in memory for the application to
-        // change
         datPrv.blockWrite(listOfTODOs, "TODOs.csv");
 
         System.out.println("TODO successfully added.");
-
 
     }
 
