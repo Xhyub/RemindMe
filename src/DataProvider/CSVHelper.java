@@ -14,7 +14,8 @@ import java.util.logging.Logger;
 public class CSVHelper
 {
     private PrintWriter w;
-    private PrintWriter r;
+    private BufferedWriter b;
+
 
     public CSVHelper() {
         super();
@@ -22,6 +23,10 @@ public class CSVHelper
     public CSVHelper(PrintWriter w) {
         // declare a writer instance with output stream intact
         this.w = w;
+    }
+    public CSVHelper(BufferedWriter b) {
+        // declare a writer instance with output stream intact
+        this.b = b;
     }
     public void writeLine(List<String> values)
             throws Exception
@@ -50,6 +55,31 @@ public class CSVHelper
         }
         w.write("\r"); // TODO: may need to check if this is writing properly as per RFC
     }
+
+    public void buf_writeLine(List<String> fields) throws Exception {
+
+
+        // debug
+        System.out.println(fields);
+        StringBuilder line = new StringBuilder();
+        for (int i = 0; i < fields.size(); i++) {
+            if (i > 0) {
+                line.append(",");
+            }
+            line.append("\"").append(escapeDoubleQuotes(fields.get(i))).append("\"");
+        }
+
+        // not writing to file?
+        b.write(line.toString());
+        System.out.println("Your line is: " + line);
+        b.newLine();
+
+    }
+
+    private static String escapeDoubleQuotes(String field) {
+        return field.replace("\"", "\"\"");
+    }
+
     /**
      * Returns a null when the input stream is empty
      */

@@ -210,9 +210,6 @@ public class RemindMe {
         } catch (DataAccessException dae) {
 
             dae.printStackTrace();
-
-            // System.out.print("Size of List: " + listOfJobs.size());
-
             return;
         }
 

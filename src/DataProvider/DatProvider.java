@@ -143,20 +143,20 @@ public class DatProvider {
             // by fixing it will tell you why
             private boolean generateCSVHeader(CSVHelper help) {
 
-                final String unixID = "unixID";
+                final String unixID = "unixTIME";
                 final String dsc = "desc";
                 final String mrk = "marked"; // TODO: feature allows todos to be parsed as active/inactive
                 final String dte = "dateLogged";
-                final String dur = "duration"; // TODO: feature allows duration to be calculated from the date logged
+                // final String dur = "duration"; // TODO: feature allows duration to be calculated from the date logged
                 final String pid = "projID";
 
                 List<String> header = new ArrayList<>();
                 header.add(unixID);
-                header.add(dsc);
-                header.add(mrk);
-                header.add(dte);
-                header.add(dur);
                 header.add(pid);
+                header.add(dsc);
+                header.add(dte);
+                // header.add(dur);
+                header.add(mrk);
 
                 try {
 
@@ -214,8 +214,6 @@ public class DatProvider {
         assert(success);
         class local {
 
-            // if the returned class is Red in your IDE it's a problem and
-            // by fixing it will tell you why
             private boolean generateCSVHeader(CSVHelper help) {
 
                 final String unixID = "unixID";
@@ -411,30 +409,37 @@ public class DatProvider {
             File FILE_NAME = new File(p2.toString());
             if (FILE_NAME.exists()) {
 
-                PrintWriter writer;
+                // PrintWriter writer;
+                BufferedWriter w = null;
                 try {
 
-                    writer = new PrintWriter(new FileOutputStream(FILE_NAME, false));
-                    CSVHelper help = new CSVHelper(writer);
-
+                    w = new BufferedWriter(
+                            new FileWriter(FILE_NAME, false));
+                    CSVHelper h = new CSVHelper(w);
                     for (List<String> line :
                             list) {
-
                         try {
 
-                            help.writeLine(line);
+                            h.buf_writeLine(line);
 
-                        }
-                        catch (Exception e){
+                        } catch (Exception e) {
                             // e.printStackTrace();
                             blockWrite(list, resource);
                         }
                     }
+
                 } catch (Exception e) {
                     Logger.global.info("An underlying output stream could not be opened. Please check the resource file to see if headers have been updated.");
                     e.printStackTrace();
+                } finally {
+                    if (w != null) try {
+                        w.close();
+                    } catch (IOException ignore) {
+                    }
                 }
                 Logger.global.info("Write performed jobs.csv.");
+
+
             }
         }
         else if ("TODOs.csv".equals(resource)) {
@@ -445,19 +450,22 @@ public class DatProvider {
             if (FILE_NAME.exists()) {
 
                 PrintWriter writer;
+                BufferedWriter w = null;
                 try {
 
                     writer = new PrintWriter(new FileOutputStream(FILE_NAME, false));
                     CSVHelper help = new CSVHelper(writer);
 
+                    w = new BufferedWriter(
+                            new FileWriter(FILE_NAME, false));
+                    CSVHelper h = new CSVHelper(w);
                     for (List<String> line :
                             list) {
-
-                        // write here
-                        // what if errors occur?
                         try {
 
-                            help.writeLine(line);
+                            // help.writeLine(line);
+                            h.buf_writeLine(line);
+
                         }
                         catch (Exception e){
                             // e.printStackTrace();
@@ -468,6 +476,11 @@ public class DatProvider {
                     Logger.global.info("An underlying output stream could not be opened. " +
                             "Please check the resource file to see if headers have been updated.");
                     e.printStackTrace();
+                } finally {
+                    if (w != null) try {
+                        w.close();
+                    } catch (IOException ignore) {
+                    }
                 }
                 Logger.global.info("Write performed TODOs.csv.");
             }
