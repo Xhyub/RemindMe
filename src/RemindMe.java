@@ -8,6 +8,7 @@ import java.io.File;
 import java.lang.reflect.Array;
 import java.nio.file.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.*;
@@ -186,6 +187,10 @@ public class RemindMe {
                                         break;
                 case 4:                 System.out.println("Exiting the application.");
                                         System.exit(0);
+
+                case 5:                 //
+                                        System.out.println("Removing TODO");
+                                        removeTODO();
                 default:
 
             }
@@ -242,7 +247,7 @@ public class RemindMe {
         DatProvider datPrv = fc1.createDataProvider();
 
         ArrayList<List<String>> listOfTODOs = new ArrayList<List<String>>();
-        int lne = 0;
+        int lne = 0; // technical debt
         try {
             // TODO: Needs a load to display the available projects
             listOfTODOs = datPrv.loadTODOsCSVData_Session(listOfTODOs);
@@ -269,6 +274,60 @@ public class RemindMe {
 
     }
 
+    private static void removeTODO()
+    {
+        // define the precondition for consistency...
+        // touch both resource files
+        // consider the case where these don't exist
+        // consider the case where these are not properly formatted
+        // TODO: adding the format headers is a good start
+        // this is done in the prelim checks
+        // consider the case where they do exist
+        // E-T-L
+
+        // dataProv =
+        // perform a load
+        DatProvider datPrv = fc1.createDataProvider();
+        ArrayList<List<String>> listOfTODOs = new ArrayList<List<String>>();
+        try {
+            listOfTODOs = datPrv.loadTODOsCSVData_Session(listOfTODOs);
+        } catch (DataAccessException dae) {
+
+            dae.printStackTrace();
+
+        }
+
+        // which todo?
+        int todInd = 0;
+        for (List<String> tod : listOfTODOs)
+        {
+            System.out.println("[" + todInd++ + "]" + tod);
+        }
+        // get some based input from the user
+        System.out.print("Select the TODO to remove: ");
+        Scanner kb = new Scanner(System.in);
+        int ind = kb.nextInt();
+
+        // remove by index
+        for (Iterator<List<String>> iter = listOfTODOs.listIterator(); iter.hasNext();)
+        {
+            List<String> line = iter.next();
+            // TODO: Feature that sets inactive/active
+            if (Integer.toString(ind).equals(line.get(1).trim())
+            ){
+                iter.remove();
+                System.out.println();
+            }
+            // TODO: Feature that orders the TODOs by date
+        }
+
+        for (List<String> tod : listOfTODOs)
+        {
+            System.out.println(tod);
+        }
+        // write back keeping all things consistent
+    }
+
     private static void printTheActiveList() {
 
         DatProvider datPrv = fc1.createDataProvider();
@@ -287,16 +346,15 @@ public class RemindMe {
         // start remind me loop
         RemindMe ker = new RemindMe();
 
-
         LogManager obj = getLogManager();
         ker.factorySetup();
         ker.initLogHandler(obj);
         ker.initWithSysInfo();
 
-        boolean sysInitGo;
-        sysInitGo = ker.systemDependenciesChk();
+        boolean progStGo;
+        progStGo = ker.systemDependenciesChk();
 
-        if (sysInitGo) {
+        if (progStGo) {
             while (1 > 0) {
                 ker.displayMenuText();
                 ker.getCommandFromUser();
